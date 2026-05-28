@@ -1,0 +1,4 @@
+Set-ExecutionPolicy Bypass -Scope Process -Force; . .\iniciar.ps1
+cd meu-projeto
+php artisan migrate
+php artisan serve
