@@ -1,33 +1,41 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 
-use Illuminate\Http\Request;
+    public function indexContinua() {
+    $fita = DB::table('historico_calculos')->orderBy('id', 'asc')->get();
+    $ultimoAcumulado = $fita->last()?->acumulado ?? 0;
+   return view('calculadora_continua', compact('fita', 'ultimoAcumulado'));
+   }
 
-class CalculadoraController extends Controller
-{
-    // Função para mostrar a página inicial (GET)
-public function index()
-{
-    return view('calculo');
-}
+   public function calcularContinua(Request $request) {
+    $dados = $request->validate([
+   'num' => 'required|numeric',
+   'operacao' => 'required|in:soma,sub,mult,div'
+    ], [
+   'required' => 'O preenchimento do número é obrigatório!',
+   'numeric' => 'Digite exclusivamente números!'
+    ]);
 
-    // Função para processar a conta (POST)
-    public function calcular(Request $request)
-    {
-        $n1 = $request->input('n1');
-        $n2 = $request->input('n2');
-        $op = $request->input('operacao');
-        $resultado = 0;
-
-        switch ($op) {
-            case 'soma': $resultado = $n1 + $n2; break;
-            case 'sub':  $resultado = $n1 - $n2; break;
-            case 'mult': $resultado = $n1 * $n2; break;
-            case 'div':  $resultado = ($n2 != 0) ? $n1 / $n2 : "Erro: Divisão por zero"; break;
-        }
-
-        // Devolve para a mesma view, mas agora levando o resultado
-        return view('calculo', compact('resultado', 'n1', 'n2', 'op'));
+        $ultimoRegistro = DB::table('historico_calculos')->orderBy('id', 'desc')->first();
+    $acumuladoAnterior = $ultimoRegistro ? $ultimoRegistro->acumulado : 0;
+    $novoNumero = $dados['num'];
+    $op = $dados['operacao'];
+    $novoAcumulado = 0;
+    if ($op == 'soma') $novoAcumulado = $acumuladoAnterior + $novoNumero;
+    elseif ($op == 'sub') $novoAcumulado = $acumuladoAnterior - $novoNumero;
+    elseif ($op == 'mult') $novoAcumulado = $acumuladoAnterior * $novoNumero;
+    elseif ($op == 'div') {
+    $novoAcumulado = $novoNumero != 0 ? ($acumuladoAnterior / $novoNumero) :
+    $acumuladoAnterior;
     }
-}
+   
+    DB::table('historico_calculos')->insert([
+        'valor' => $novoNumero,
+        'operacao' => $op,
+         => now(),
+        return redirect(// 3. Realiza o truncamento (limpeza total) da fita
+        public function limparContinua() {
+         DB::table(return redirect();
+        
+>
